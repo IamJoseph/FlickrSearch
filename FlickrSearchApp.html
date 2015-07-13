@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">     
+      <style>
+        .wrapper{
+        margin: 40px 0;
+        text-align:center;
+        }
+        img {
+          height: 49%;
+          padding: 0 1% 1%;          
+        }
+        #images{
+          height: 67vh;
+          margin: auto;
+          overflow-x: hidden;
+          overflow-y: auto;
+          text-align: center;
+          width: 80%; 
+        }
+      </style>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>     
+    </head>
+    <body>
+        <div class="wrapper">
+        <input type="text" id="flickrInput">
+        <button id="flickrSearch">Search Photos</button>
+        </div>
+        <div id="images"></div>      
+        <script>
+          $(document).ready(function () {
+            $("#flickrInput").keyup(function(event){
+              //Maps to Enter Key
+              if(event.keyCode == 13){
+                $("#flickrSearch").click();
+              }
+            });
+            $("#flickrSearch").click(function (event) {
+              $("#images").empty();
+              var searchVal = $("#flickrInput").val();
+              //Insert your own API key from flickr into the url
+              var flickrAPI = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=dd4a16666bdf3c2180b43bec8dd1534a&nojsoncallback=1";
+              //takes three arguments i.e. url, data, and a callback 
+              $.getJSON( flickrAPI, {
+              tags: searchVal,
+              per_page: 25,
+              safe_search: 1,
+              format: "json"              
+              })  
+              //newer version of success callback and better for maintainability
+              .done(function( data ) {
+                $.each( data.photos.photo, function( i, item ) {
+                  var url = 'https://farm' + item.farm + '.staticflickr.com/' + item.server + '/' + item.id + '_' + item.secret + '.jpg';
+                  $('#images').append('<img src="' + url + '"/>');      
+                });
+              });
+            });    
+          });
+        </script>
+    </body>
+</html>
